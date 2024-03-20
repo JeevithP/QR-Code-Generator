@@ -1,1 +1,1 @@
-# QR-Code-Generator
+This is a simple website which generates a qr-code of the url entered by the user. This website is built using HTML,CSS,Javascript and ExpressJS is used for generating qr-code and ejs is used to do "get" and "post" request.

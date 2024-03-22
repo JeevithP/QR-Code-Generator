@@ -12,57 +12,61 @@ app.get("/",(req,res)=>{
 })
 app.post("/submit", (req, res) => {
   const url = req.body.url;
-
+  if(url==""){
+    res.redirect("/");
+  }
   // Function to generate QR code
-  const generateQRCode = () => {
-      return new Promise((resolve, reject) => {
-          let qr_svg = qr.image(url);
+  else {
+    const generateQRCode = () => {
+        return new Promise((resolve, reject) => {
+            let qr_svg = qr.image(url);
 
-          qr_svg.on('error', function(err) {
-              reject(err);
-          });
+            qr_svg.on('error', function(err) {
+                reject(err);
+            });
 
-          const outputPath = "c:/Users/JEEVITH/OneDrive/Documents/Web Dev/qr2/public/qr3.jpg";
-          const outputStream = fs.createWriteStream(outputPath);
+            const outputPath = "c:/Users/JEEVITH/OneDrive/Documents/Web Dev/qr2/public/qr3.jpg";
+            const outputStream = fs.createWriteStream(outputPath);
 
-          outputStream.on('error', function(err) {
-              reject(err);
-          });
+            outputStream.on('error', function(err) {
+                reject(err);
+            });
 
-          qr_svg.pipe(outputStream);
+            qr_svg.pipe(outputStream);
 
-          outputStream.on('finish', function() {
-              console.log('QR code image generated successfully!');
-              resolve(outputPath); // Resolve with the output path
-          });
-      });
-  };
+            outputStream.on('finish', function() {
+                console.log('QR code image generated successfully!');
+                resolve(outputPath); // Resolve with the output path
+            });
+        });
+    };
 
-  // Function to write URL to file
-  const writeURLToFile = () => {
-      return new Promise((resolve, reject) => {
-          fs.writeFile("URL.txt", url, (err) => {
-              if (err) {
-                  reject(err);
-              } else {
-                  console.log("File has been created");
-                  resolve(); // Resolve without any value
-              }
-          });
-      });
-  };
+    // Function to write URL to file
+    const writeURLToFile = () => {
+        return new Promise((resolve, reject) => {
+            fs.writeFile("URL.txt", url, (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    console.log("File has been created");
+                    resolve(); // Resolve without any value
+                }
+            });
+        });
+    };
 
-  // Execute the functions sequentially using Promise.all
-  Promise.all([generateQRCode(), writeURLToFile()])
-      .then(([outputPath, _]) => {
-          // Both operations completed successfully
-          res.render("result.ejs");
-      })
-      .catch(err => {
-          // An error occurred during QR code generation or file writing
-          console.error(err);
-          res.status(500).send("An error occurred.");
-      });
+    // Execute the functions sequentially using Promise.all
+    Promise.all([generateQRCode(), writeURLToFile()])
+        .then(([outputPath, _]) => {
+            // Both operations completed successfully
+            res.render("result.ejs");
+        })
+        .catch(err => {
+            // An error occurred during QR code generation or file writing
+            console.error(err);
+            res.status(500).send("An error occurred.");
+        });
+    }
 });
 app.post("/home",(req,res)=>{
   res.redirect("/");

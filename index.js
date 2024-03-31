@@ -36,7 +36,7 @@ app.post("/submit", (req, res) => {
 
             outputStream.on('finish', function() {
                 console.log('QR code image generated successfully!');
-                resolve(outputPath); // Resolve with the output path
+                resolve(outputPath); 
             });
         });
     };
@@ -49,20 +49,18 @@ app.post("/submit", (req, res) => {
                     reject(err);
                 } else {
                     console.log("File has been created");
-                    resolve(); // Resolve without any value
+                    resolve(); 
                 }
             });
         });
     };
 
-    // Execute the functions sequentially using Promise.all
+    
     Promise.all([generateQRCode(), writeURLToFile()])
         .then(([outputPath, _]) => {
-            // Both operations completed successfully
             res.render("result.ejs");
         })
         .catch(err => {
-            // An error occurred during QR code generation or file writing
             console.error(err);
             res.status(500).send("An error occurred.");
         });
